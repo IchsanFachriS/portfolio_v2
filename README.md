@@ -1,36 +1,91 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ichsanfachri.my.id — Portfolio + Admin Panel
 
-## Getting Started
+Website profil Ichsan Fachri Siroj. Dibuat dengan **Next.js 15 (full stack)**, Tailwind CSS v4, PostgreSQL (Drizzle ORM), dan object storage S3-compatible.
 
-First, run the development server:
+| Host | Fungsi |
+|---|---|
+| `ichsanfachri.my.id` | Website publik (light/dark mode, navy & hitam) |
+| `admin.ichsanfachri.my.id` | Panel admin: login, edit profil/experience/projects/skills/awards, upload foto & PDF |
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+Satu aplikasi melayani dua host. `src/middleware.ts` me-rewrite `admin.*` ke route `/admin/*`, dan `/admin` di domain utama selalu 404.
+
+## Struktur singkat
+```
+src/app/page.tsx                 halaman publik (data dari DB)
+src/app/admin/login              login admin
+src/app/admin/(dash)/*           halaman CRUD (dilindungi session)
+src/app/api/admin/upload         upload file → object storage + tabel media
+src/db/schema.ts                 skema database
+src/db/seed.ts                   akun admin + konten awal dari CV
+drizzle/                         file migrasi SQL
+deploy/nginx.conf                konfigurasi Nginx untuk 2 host
+.github/workflows/deploy.yml     auto-deploy ke VPS saat push ke main
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Jalankan lokal
+```bash
+cp .env.example .env            # isi DATABASE_URL, AUTH_SECRET, dll.
+npm install
+npm run db:migrate
+npm run db:seed
+npm run dev
+```
+- Publik: http://localhost:3000
+- Admin: http://admin.localhost:3000 (browser otomatis mengarahkan `*.localhost` ke 127.0.0.1)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deploy ke VPS
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 1. DNS (di panel domain .my.id)
+| Type | Name | Value |
+|---|---|---|
+| A | `@` | IP VPS |
+| A | `www` | IP VPS |
+| A | `admin` | IP VPS |
 
-## Learn More
+### 2. Siapkan VPS (Ubuntu)
+```bash
+sudo apt update && sudo apt install -y nginx certbot python3-certbot-nginx git
+curl -fsSL https://get.docker.com | sh && sudo usermod -aG docker $USER   # login ulang setelah ini
 
-To learn more about Next.js, take a look at the following resources:
+git clone https://github.com/<username>/<repo>.git ~/portfolio
+cd ~/portfolio
+cp .env.example .env && nano .env
+```
+Kalau pakai Postgres dari `docker-compose.yml`, isi:
+```
+DATABASE_URL=postgresql://portfolio:<POSTGRES_PASSWORD>@db:5432/portfolio
+POSTGRES_PASSWORD=<password-yang-sama>
+```
+Kalau pakai database terpisah/managed, hapus service `db` di `docker-compose.yml` lalu arahkan `DATABASE_URL` ke sana.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 3. Jalankan
+```bash
+docker compose up -d --build
+docker compose exec app node scripts/migrate.js
+docker compose exec app node scripts/seed.js      # buat akun admin + isi konten dari CV
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 4. Nginx + SSL
+```bash
+sudo cp deploy/nginx.conf /etc/nginx/sites-available/ichsanfachri.my.id
+sudo ln -s /etc/nginx/sites-available/ichsanfachri.my.id /etc/nginx/sites-enabled/
+# Ambil sertifikat dulu (sementara pakai blok :80 saja), lalu reload:
+sudo certbot certonly --nginx -d ichsanfachri.my.id -d www.ichsanfachri.my.id -d admin.ichsanfachri.my.id
+sudo nginx -t && sudo systemctl reload nginx
+```
 
-## Deploy on Vercel
+### 5. Object storage
+1. Buat bucket, lalu buat access key yang hanya punya akses ke bucket itu.
+2. Buat file bisa dibaca publik: pakai bucket policy public-read, custom domain/CDN, atau set `S3_PUBLIC_ACL=true`.
+3. Isi variabel `S3_*` di `.env`. `S3_PUBLIC_URL` adalah URL dasar yang dipakai untuk menampilkan file.
+4. Upload lewat server (tanpa presigned URL), jadi bucket **tidak perlu** pengaturan CORS.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 6. Auto-deploy dari GitHub (opsional)
+Isi secrets ini di repo (Settings → Secrets → Actions): `VPS_HOST`, `VPS_USER`, `VPS_SSH_KEY`, opsional `VPS_PORT` dan `VPS_APP_DIR`.
+Setelah itu, setiap push ke `main` akan menjalankan pull, rebuild, dan migrasi di VPS.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Cara update konten
+Buka `admin.ichsanfachri.my.id`, login, lalu edit. Perubahan langsung tampil di website. Foto/PDF diunggah lewat tombol **Upload** di form, atau lewat menu **Media**.
+
+## Mengubah skema database
+Edit `src/db/schema.ts`, jalankan `npm run db:generate`, lalu commit folder `drizzle/`. Migrasi akan jalan otomatis saat deploy.
