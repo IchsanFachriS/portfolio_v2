@@ -4,7 +4,7 @@ import postgres from "postgres";
 import bcrypt from "bcryptjs";
 import * as s from "./schema";
 
-const client = postgres(process.env.DATABASE_URL!, { max: 1 });
+const client = postgres(process.env.DATABASE_URL!, { max: 1, prepare: false });
 const db = drizzle(client, { schema: s });
 
 async function main() {

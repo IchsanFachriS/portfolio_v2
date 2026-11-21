@@ -1,5 +1,9 @@
-import { boolean, integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { boolean, integer, pgSchema, text, timestamp } from "drizzle-orm/pg-core";
 import { createId } from "./id";
+
+// Schema terpisah agar tidak bentrok dengan tabel aplikasi lain di database yang sama
+export const portfolio = pgSchema("portfolio");
+const pgTable = portfolio.table;
 
 const id = () => text("id").primaryKey().$defaultFn(createId);
 

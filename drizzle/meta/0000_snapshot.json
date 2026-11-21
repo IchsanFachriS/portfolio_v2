@@ -1,12 +1,12 @@
 {
-  "id": "037100a5-62b8-44bb-abfd-4b6f3f004ddd",
+  "id": "b2ed5590-7756-4be2-b22f-19decde72d2f",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
-    "public.award": {
+    "portfolio.award": {
       "name": "award",
-      "schema": "",
+      "schema": "portfolio",
       "columns": {
         "id": {
           "name": "id",
@@ -61,9 +61,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.experience": {
+    "portfolio.experience": {
       "name": "experience",
-      "schema": "",
+      "schema": "portfolio",
       "columns": {
         "id": {
           "name": "id",
@@ -124,9 +124,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.media": {
+    "portfolio.media": {
       "name": "media",
-      "schema": "",
+      "schema": "portfolio",
       "columns": {
         "id": {
           "name": "id",
@@ -188,9 +188,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.profile": {
+    "portfolio.profile": {
       "name": "profile",
-      "schema": "",
+      "schema": "portfolio",
       "columns": {
         "id": {
           "name": "id",
@@ -281,9 +281,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.project": {
+    "portfolio.project": {
       "name": "project",
-      "schema": "",
+      "schema": "portfolio",
       "columns": {
         "id": {
           "name": "id",
@@ -350,9 +350,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.skill_group": {
+    "portfolio.skill_group": {
       "name": "skill_group",
-      "schema": "",
+      "schema": "portfolio",
       "columns": {
         "id": {
           "name": "id",
@@ -388,9 +388,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.users": {
+    "portfolio.users": {
       "name": "users",
-      "schema": "",
+      "schema": "portfolio",
       "columns": {
         "id": {
           "name": "id",
@@ -442,7 +442,9 @@
     }
   },
   "enums": {},
-  "schemas": {},
+  "schemas": {
+    "portfolio": "portfolio"
+  },
   "sequences": {},
   "roles": {},
   "policies": {},

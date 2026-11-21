@@ -1,4 +1,6 @@
-CREATE TABLE "award" (
+CREATE SCHEMA "portfolio";
+--> statement-breakpoint
+CREATE TABLE "portfolio"."award" (
 	"id" text PRIMARY KEY NOT NULL,
 	"title" text NOT NULL,
 	"issuer" text NOT NULL,
@@ -8,7 +10,7 @@ CREATE TABLE "award" (
 	"published" boolean DEFAULT true NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "experience" (
+CREATE TABLE "portfolio"."experience" (
 	"id" text PRIMARY KEY NOT NULL,
 	"role" text NOT NULL,
 	"company" text NOT NULL,
@@ -19,7 +21,7 @@ CREATE TABLE "experience" (
 	"published" boolean DEFAULT true NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "media" (
+CREATE TABLE "portfolio"."media" (
 	"id" text PRIMARY KEY NOT NULL,
 	"key" text NOT NULL,
 	"url" text NOT NULL,
@@ -30,7 +32,7 @@ CREATE TABLE "media" (
 	CONSTRAINT "media_key_unique" UNIQUE("key")
 );
 --> statement-breakpoint
-CREATE TABLE "profile" (
+CREATE TABLE "portfolio"."profile" (
 	"id" text PRIMARY KEY DEFAULT 'main' NOT NULL,
 	"name" text NOT NULL,
 	"headline" text NOT NULL,
@@ -46,7 +48,7 @@ CREATE TABLE "profile" (
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "project" (
+CREATE TABLE "portfolio"."project" (
 	"id" text PRIMARY KEY NOT NULL,
 	"title" text NOT NULL,
 	"description" text NOT NULL,
@@ -58,14 +60,14 @@ CREATE TABLE "project" (
 	"published" boolean DEFAULT true NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "skill_group" (
+CREATE TABLE "portfolio"."skill_group" (
 	"id" text PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
 	"items" text NOT NULL,
 	"order" integer DEFAULT 0 NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "users" (
+CREATE TABLE "portfolio"."users" (
 	"id" text PRIMARY KEY NOT NULL,
 	"email" text NOT NULL,
 	"password_hash" text NOT NULL,
