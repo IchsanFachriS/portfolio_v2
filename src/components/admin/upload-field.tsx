@@ -22,7 +22,7 @@ export function UploadField({ name, defaultValue, accept }: { name: string; defa
 
   return (
     <div className="space-y-2">
-      <div className="flex gap-2">
+      <div className="flex flex-col gap-2 sm:flex-row">
         <input name={name} value={value} onChange={(e) => setValue(e.target.value)} className="input" placeholder="https://…" />
         <button type="button" onClick={() => ref.current?.click()} className="btn-ghost shrink-0" disabled={busy}>
           <Upload size={14} /> {busy ? "Mengunggah…" : "Upload"}
@@ -32,7 +32,7 @@ export function UploadField({ name, defaultValue, accept }: { name: string; defa
       {err && <p className="text-xs text-red-500">{err}</p>}
       {value && accept.startsWith("image") && (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={value} alt="" className="h-24 rounded border border-border object-cover" />
+        <img src={value} alt="" className="h-24 rounded-xl border-2 border-border object-cover" />
       )}
     </div>
   );

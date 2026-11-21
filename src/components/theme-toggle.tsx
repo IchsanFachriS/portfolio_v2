@@ -12,7 +12,7 @@ export function ThemeToggle() {
     <button
       aria-label="Ganti tema"
       onClick={() => setTheme(dark ? "light" : "dark")}
-      className="rounded-md border border-border p-2 text-muted transition hover:text-fg"
+      className="btn-ghost !p-2"
     >
       {mounted ? (dark ? <Sun size={16} /> : <Moon size={16} />) : <span className="block h-4 w-4" />}
     </button>

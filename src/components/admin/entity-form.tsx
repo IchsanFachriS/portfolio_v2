@@ -34,13 +34,13 @@ export function EntityForm({
         const wide = f.type === "textarea" || f.type === "image" || f.type === "file";
         return (
           <label key={f.name} className={`space-y-1 text-sm ${wide ? "md:col-span-2" : ""}`}>
-            <span className="font-medium">
+            <span className="font-semibold">
               {f.label} {f.required && <span className="text-red-500">*</span>}
             </span>
             {f.type === "textarea" ? (
               <textarea name={f.name} defaultValue={(v as string) ?? ""} rows={4} className="input" />
             ) : f.type === "checkbox" ? (
-              <div><input type="checkbox" name={f.name} defaultChecked={values ? Boolean(v) : true} className="h-4 w-4 accent-[var(--navy)]" /></div>
+              <div><input type="checkbox" name={f.name} defaultChecked={values ? Boolean(v) : true} className="h-5 w-5 accent-[var(--accent)]" /></div>
             ) : f.type === "image" ? (
               <UploadField name={f.name} defaultValue={v as string} accept="image/*" />
             ) : f.type === "file" ? (
@@ -52,7 +52,7 @@ export function EntityForm({
           </label>
         );
       })}
-      <div className="flex items-center gap-3 md:col-span-2">
+      <div className="flex flex-wrap items-center gap-3 md:col-span-2">
         <button className="btn" disabled={pending}>{pending ? "Menyimpan…" : submitLabel}</button>
         {children}
         {state.error && <span className="text-sm text-red-500">{state.error}</span>}

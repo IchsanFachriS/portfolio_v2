@@ -13,10 +13,10 @@ export async function ResourcePage({ resource }: { resource: ResourceKey }) {
 
   return (
     <div className="space-y-8">
-      <h1 className="text-2xl font-semibold">{cfg.title}</h1>
+      <h1 className="text-3xl font-extrabold tracking-tight">{cfg.title}</h1>
 
-      <details className="rounded-xl border border-dashed border-border p-5">
-        <summary className="cursor-pointer text-sm font-medium text-accent">+ Tambah baru</summary>
+      <details className="rounded-2xl border-2 border-dashed border-accent bg-accent-soft/50 p-4 sm:p-5">
+        <summary className="cursor-pointer text-sm font-bold text-accent">＋ Tambah baru</summary>
         <div className="mt-5">
           <EntityForm fields={cfg.fields} action={saveResource.bind(null, resource, null)} submitLabel="Tambah" resetOnSuccess />
         </div>
@@ -24,9 +24,9 @@ export async function ResourcePage({ resource }: { resource: ResourceKey }) {
 
       <div className="space-y-3">
         {items.map((item) => (
-          <details key={item.id} className="rounded-xl border border-border bg-surface p-5">
+          <details key={item.id} className="card p-4 sm:p-5">
             <summary className="flex cursor-pointer items-center justify-between gap-3 text-sm">
-              <span className="font-medium">{item[cfg.titleField]}</span>
+              <span className="font-bold">{item[cfg.titleField]}</span>
               <span className="font-mono text-xs text-muted">
                 #{item.order}{item.published === false ? " · tersembunyi" : ""}
               </span>
@@ -34,7 +34,7 @@ export async function ResourcePage({ resource }: { resource: ResourceKey }) {
             <div className="mt-5">
               <EntityForm fields={cfg.fields} values={item} action={saveResource.bind(null, resource, item.id)} />
               <form action={deleteResource.bind(null, resource, item.id)} className="mt-3">
-                <button className="text-xs text-red-500 hover:underline">Hapus item ini</button>
+                <button className="text-xs font-semibold text-red-500 hover:underline">Hapus item ini</button>
               </form>
             </div>
           </details>

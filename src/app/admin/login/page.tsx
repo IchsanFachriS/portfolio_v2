@@ -6,11 +6,12 @@ import { ThemeToggle } from "@/components/theme-toggle";
 export default function LoginPage() {
   const [state, action, pending] = useActionState(login, undefined);
   return (
-    <main className="grid min-h-screen place-items-center bg-surface px-6">
+    <main className="grid min-h-screen place-items-center px-4">
       <div className="absolute right-4 top-4"><ThemeToggle /></div>
-      <form action={action} className="w-full max-w-sm space-y-4 rounded-2xl border border-border bg-bg p-8">
+      <form action={action} className="card w-full max-w-sm space-y-4 p-6 sm:p-8">
         <div>
-          <h1 className="text-xl font-semibold">Admin Panel</h1>
+          <div className="mb-3 grid h-12 w-12 place-items-center rounded-xl border-2 border-fg bg-pop-yellow text-2xl shadow-[3px_3px_0_0_var(--shadow)] dark:border-border">🔐</div>
+          <h1 className="text-2xl font-extrabold">Admin Panel</h1>
           <p className="text-sm text-muted">Masuk untuk mengelola website.</p>
         </div>
         <input name="email" type="email" placeholder="Email" required autoComplete="email" className="input" />
