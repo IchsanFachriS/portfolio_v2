@@ -1,10 +1,22 @@
+# Dijalankan berdampingan dengan stack lain di VPS yang sama.
+# Caddy (milik stack lain) memegang port 80/443 dan meneruskan domain ke service ini
+# lewat jaringan Docker bersama "app_default".
+# PENTING: nama service sengaja "portfolio", BUKAN "app" — nama "app" sudah dipakai
+# stack lain di jaringan yang sama (akan salah rute).
 services:
-  app:
+  portfolio:
     build: .
     image: portfolio:latest
+    container_name: portfolio
     restart: unless-stopped
     env_file: .env
-    ports:
-      - "127.0.0.1:3000:3000"
+    expose:
+      - "3000"
+    networks:
+      - default
+      - caddy
 
-  # Database memakai PostgreSQL terpisah (Sumopod) — atur lewat DATABASE_URL di .env
+networks:
+  caddy:
+    name: app_default
+    external: true

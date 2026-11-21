@@ -18,7 +18,7 @@ src/app/api/admin/upload         upload file → object storage + tabel media
 src/db/schema.ts                 skema database
 src/db/seed.ts                   akun admin + konten awal dari CV
 drizzle/                         file migrasi SQL
-deploy/nginx.conf                konfigurasi Nginx untuk 2 host
+deploy/Caddyfile.snippet         blok Caddy untuk 2 host
 .github/workflows/deploy.yml     auto-deploy ke VPS saat push ke main
 ```
 
@@ -42,36 +42,28 @@ npm run dev
 | A | `www` | IP VPS |
 | A | `admin` | IP VPS |
 
-### 2. Siapkan VPS (Ubuntu)
+### 2. Siapkan VPS (Ubuntu + Docker)
+VPS ini dipakai bersama stack lain yang sudah menjalankan **Caddy** di port 80/443, jadi **jangan** memasang Nginx/certbot.
 ```bash
-sudo apt update && sudo apt install -y nginx certbot python3-certbot-nginx git
-curl -fsSL https://get.docker.com | sh && sudo usermod -aG docker $USER   # login ulang setelah ini
-
-git clone https://github.com/<username>/<repo>.git ~/portfolio
+git clone https://github.com/IchsanFachriS/portfolio_v2.git ~/portfolio
 cd ~/portfolio
-cp .env.example .env && nano .env
+cp .env.example .env && nano .env     # isi DATABASE_URL, AUTH_SECRET, S3_*, ADMIN_*
 ```
-Kalau pakai Postgres dari `docker-compose.yml`, isi:
-```
-DATABASE_URL=postgresql://portfolio:<POSTGRES_PASSWORD>@db:5432/portfolio
-POSTGRES_PASSWORD=<password-yang-sama>
-```
-Kalau pakai database terpisah/managed, hapus service `db` di `docker-compose.yml` lalu arahkan `DATABASE_URL` ke sana.
+Database: PostgreSQL Sumopod (Transactional Pooler). Tabel dibuat di schema `portfolio`, terpisah dari tabel lain di database yang sama.
 
 ### 3. Jalankan
 ```bash
 docker compose up -d --build
-docker compose exec app node scripts/migrate.js
-docker compose exec app node scripts/seed.js      # buat akun admin + isi konten dari CV
+docker compose exec portfolio node scripts/migrate.js
+docker compose exec portfolio node scripts/seed.js   # buat akun admin + isi konten dari CV
 ```
+Service bernama `portfolio` dan bergabung ke jaringan `app_default` (milik Caddy). Jangan ganti namanya menjadi `app`.
 
-### 4. Nginx + SSL
+### 4. Caddy (HTTPS otomatis)
+Tambahkan isi `deploy/Caddyfile.snippet` ke Caddyfile yang dipakai Caddy, lalu reload tanpa downtime:
 ```bash
-sudo cp deploy/nginx.conf /etc/nginx/sites-available/ichsanfachri.my.id
-sudo ln -s /etc/nginx/sites-available/ichsanfachri.my.id /etc/nginx/sites-enabled/
-# Ambil sertifikat dulu (sementara pakai blok :80 saja), lalu reload:
-sudo certbot certonly --nginx -d ichsanfachri.my.id -d www.ichsanfachri.my.id -d admin.ichsanfachri.my.id
-sudo nginx -t && sudo systemctl reload nginx
+docker exec app-caddy-1 caddy validate --config /etc/caddy/Caddyfile
+docker exec app-caddy-1 caddy reload --config /etc/caddy/Caddyfile
 ```
 
 ### 5. Object storage
