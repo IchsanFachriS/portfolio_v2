@@ -1,0 +1,23 @@
+# Tambahkan blok ini ke Caddyfile yang sudah ada di VPS (lalu reload Caddy).
+# Satu app Next.js melayani dua host:
+#   ichsanfachri.my.id        -> website publik
+#   admin.ichsanfachri.my.id  -> panel admin (login + upload)
+# HTTPS (Let's Encrypt) diurus otomatis oleh Caddy.
+
+ichsanfachri.my.id, admin.ichsanfachri.my.id {
+	encode zstd gzip
+	request_body {
+		max_size 25MB
+	}
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+	reverse_proxy portfolio:3000
+}
+
+www.ichsanfachri.my.id {
+	redir https://ichsanfachri.my.id{uri} permanent
+}
