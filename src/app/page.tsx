@@ -77,7 +77,7 @@ export default async function Home() {
       <header className="sticky top-0 z-40 border-b-2 border-fg bg-bg/90 backdrop-blur dark:border-border">
         <div className="mx-auto flex h-16 max-w-5xl items-center justify-between gap-3 px-4 sm:px-6">
           <a href="#" className="rounded-xl border-2 border-fg bg-pop-yellow px-3 py-1 font-mono text-sm font-bold text-[#16122b] shadow-[3px_3px_0_0_var(--shadow)] dark:border-border">
-            {profile.name.split(" ")[0].toLowerCase()}.dev
+            &lt;ichsan /&gt;
           </a>
           <nav className="hidden gap-1 text-sm font-semibold md:flex">
             {nav.map(([href, label]) => (
@@ -110,9 +110,7 @@ export default async function Home() {
                 <span aria-hidden className="absolute -bottom-1 left-0 -z-10 h-3 w-full -rotate-1 bg-pop-yellow/80 dark:bg-accent/30" />
               </span>
             </h1>
-            <p className="mt-5 flex items-start gap-2 text-lg font-semibold sm:text-xl">
-              <Sparkles size={22} className="mt-1 shrink-0 text-pop-pink" /> {profile.headline}
-            </p>
+            <p className="mt-5 text-lg font-semibold sm:text-xl">{profile.headline}</p>
             <p className="mt-4 leading-relaxed text-muted">{profile.summary.split(/(?<=\.)\s/)[0]}</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <a href={`mailto:${profile.email}`} className="btn"><Mail size={16} /> Get in touch</a>
