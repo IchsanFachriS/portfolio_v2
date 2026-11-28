@@ -9,7 +9,7 @@ export default async function MediaPage() {
     <div className="space-y-6">
       <h1 className="text-3xl font-extrabold tracking-tight">Media</h1>
       <div className="rounded-2xl border-2 border-dashed border-accent bg-accent-soft/50 p-5">
-        <p className="mb-3 text-sm text-muted">Upload foto/PDF ke object storage, lalu salin URL-nya. Refresh halaman untuk melihat di daftar.</p>
+        <p className="mb-3 text-sm text-muted">Upload images or PDFs to object storage, then copy the URL. Refresh the page to see them in the list.</p>
         <UploadField name="_tmp" accept="image/*,application/pdf" />
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -26,7 +26,7 @@ export default async function MediaPage() {
               <input readOnly value={m.url} className="input font-mono text-[11px]" />
               <div className="flex justify-between text-muted">
                 <span>{(m.size / 1024).toFixed(0)} KB</span>
-                <form action={deleteMedia.bind(null, m.id)}><button className="font-semibold text-red-500 hover:underline">Hapus</button></form>
+                <form action={deleteMedia.bind(null, m.id)}><button className="font-semibold text-red-500 hover:underline">Delete</button></form>
               </div>
             </div>
           </div>

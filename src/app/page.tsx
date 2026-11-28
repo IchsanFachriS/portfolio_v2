@@ -2,7 +2,10 @@ import { asc, eq } from "drizzle-orm";
 import { db, schema as t } from "@/lib/db";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Reveal } from "@/components/reveal";
-import { ArrowUpRight, Download, Mail, MapPin, Sparkles } from "lucide-react";
+import {
+  ArrowUpRight, Award, Briefcase, Download, GraduationCap, Hand, Handshake,
+  Mail, MapPin, Rocket, Sparkles, Trophy, User, Wrench, Zap, type LucideIcon,
+} from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -35,12 +38,12 @@ function LinkedinIcon() {
 
 const tints = ["bg-pop-yellow", "bg-pop-pink", "bg-pop-mint", "bg-pop-sky"];
 
-function Section({ id, title, emoji, children }: { id: string; title: string; emoji: string; children: React.ReactNode }) {
+function Section({ id, title, icon: Icon, children }: { id: string; title: string; icon: LucideIcon; children: React.ReactNode }) {
   return (
     <section id={id} className="scroll-mt-24 py-12 md:py-16">
       <Reveal>
         <h2 className="mb-8 flex items-center gap-3 text-3xl font-extrabold tracking-tight md:text-4xl">
-          <span className="grid h-11 w-11 place-items-center rounded-xl border-2 border-fg bg-pop-yellow text-xl shadow-[3px_3px_0_0_var(--shadow)] dark:border-border">{emoji}</span>
+          <span className="grid h-11 w-11 place-items-center rounded-xl border-2 border-fg bg-pop-yellow text-xl shadow-[3px_3px_0_0_var(--shadow)] dark:border-border text-[#16122b]"><Icon size={22} aria-hidden /></span>
           <span className="underline decoration-accent decoration-4 underline-offset-8">{title}</span>
         </h2>
       </Reveal>
@@ -61,7 +64,7 @@ export default async function Home() {
   if (!profile) {
     return (
       <main className="grid min-h-screen place-items-center p-8 text-center text-muted">
-        Konten belum tersedia. Jalankan <code className="font-mono">npm run db:seed</code>.
+        No content yet. Run <code className="font-mono">npm run db:seed</code>.
       </main>
     );
   }
@@ -94,15 +97,17 @@ export default async function Home() {
         {/* Hero */}
         <section className="relative flex flex-col-reverse items-start gap-10 py-14 md:flex-row md:items-center md:justify-between md:py-24">
           <div className="hero-in max-w-2xl">
-            <p className="chip inline-flex items-center gap-1.5 bg-pop-mint text-[#16122b]">
-              <MapPin size={13} /> {profile.location}
-            </p>
-            <h1 className="mt-5 text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-5xl md:text-6xl">
-              Hai, saya <span className="wiggle">👋</span>
+            {profile.location && (
+              <p className="chip mb-5 inline-flex items-center gap-1.5 bg-pop-mint text-[#16122b]">
+                <MapPin size={13} aria-hidden /> {profile.location}
+              </p>
+            )}
+            <h1 className="text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-5xl md:text-6xl">
+              Hi, I&apos;m <Hand aria-hidden className="wiggle ml-1 inline-block align-[-0.1em] text-pop-pink" size={40} strokeWidth={2.5} />
               <br />
               <span className="relative inline-block text-accent">
                 {profile.name}
-                <span className="absolute -bottom-1 left-0 -z-10 h-3 w-full -rotate-1 bg-pop-yellow" />
+                <span aria-hidden className="absolute -bottom-1 left-0 -z-10 h-3 w-full -rotate-1 bg-pop-yellow/80 dark:bg-accent/30" />
               </span>
             </h1>
             <p className="mt-5 flex items-start gap-2 text-lg font-semibold sm:text-xl">
@@ -110,7 +115,7 @@ export default async function Home() {
             </p>
             <p className="mt-4 leading-relaxed text-muted">{profile.summary.split(/(?<=\.)\s/)[0]}</p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <a href={`mailto:${profile.email}`} className="btn"><Mail size={16} /> Hubungi Saya</a>
+              <a href={`mailto:${profile.email}`} className="btn"><Mail size={16} /> Get in touch</a>
               {profile.cvUrl && (
                 <a href={profile.cvUrl} target="_blank" className="btn-ghost"><Download size={16} /> Download CV</a>
               )}
@@ -136,19 +141,19 @@ export default async function Home() {
           <div className="marquee -mx-4 my-4 -rotate-1 overflow-hidden border-y-2 border-fg bg-accent py-3 text-white dark:border-border dark:text-[#0f0c1f] sm:-mx-6">
             <div className="marquee-track gap-8 font-mono text-sm font-bold uppercase tracking-wider">
               {[...allSkills, ...allSkills].map((s, i) => (
-                <span key={i} className="flex items-center gap-8 whitespace-nowrap">{s} <span aria-hidden>✦</span></span>
+                <span key={i} className="flex items-center gap-8 whitespace-nowrap">{s} <Sparkles size={16} aria-hidden /></span>
               ))}
             </div>
           </div>
         )}
 
-        <Section id="about" title="About" emoji="🙋">
+        <Section id="about" title="About" icon={User}>
           <Reveal>
             <div className="grid gap-6 md:grid-cols-[1.4fr_1fr]">
               <p className="card p-6 leading-relaxed text-muted">{profile.summary}</p>
               {profile.education && (
                 <div className="card bg-pop-sky p-6 text-[#16122b]">
-                  <p className="mb-2 font-mono text-xs font-bold uppercase tracking-wider">🎓 Education</p>
+                  <p className="mb-2 flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-wider"><GraduationCap size={16} aria-hidden /> Education</p>
                   {split(profile.education, "\n").map((l, i) => (
                     <p key={i} className={i === 0 ? "text-lg font-extrabold" : "text-sm opacity-80"}>{l}</p>
                   ))}
@@ -158,7 +163,7 @@ export default async function Home() {
           </Reveal>
         </Section>
 
-        <Section id="experience" title="Experience" emoji="💼">
+        <Section id="experience" title="Experience" icon={Briefcase}>
           <ol className="relative space-y-6 border-l-4 border-dashed border-accent/40 pl-6 md:pl-8">
             {experiences.map((e, i) => (
               <Reveal key={e.id} delay={i * 60}>
@@ -182,7 +187,7 @@ export default async function Home() {
           </ol>
         </Section>
 
-        <Section id="projects" title="Projects" emoji="🚀">
+        <Section id="projects" title="Projects" icon={Rocket}>
           <div className="grid gap-6 sm:grid-cols-2">
             {projects.map((p, i) => (
               <Reveal key={p.id} delay={(i % 2) * 80} className="h-full">
@@ -191,13 +196,13 @@ export default async function Home() {
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={p.imageUrl} alt={p.title} className="aspect-video w-full border-b-2 border-fg object-cover dark:border-border" />
                   ) : (
-                    <div className={`grid aspect-video place-items-center border-b-2 border-fg text-5xl dark:border-border ${tints[i % tints.length]}`}>🛠️</div>
+                    <div className={`grid aspect-video place-items-center border-b-2 border-fg text-[#16122b] dark:border-border ${tints[i % tints.length]}`}><Wrench size={44} aria-hidden /></div>
                   )}
                   <div className="flex flex-1 flex-col p-5">
                     <div className="flex items-start justify-between gap-3">
                       <h3 className="text-lg font-extrabold">{p.title}</h3>
                       {(p.link || p.repo) && (
-                        <a href={p.link || p.repo!} target="_blank" aria-label="Buka project" className="grid h-8 w-8 shrink-0 place-items-center rounded-lg border-2 border-fg bg-pop-yellow text-[#16122b] transition group-hover:rotate-12 dark:border-border">
+                        <a href={p.link || p.repo!} target="_blank" aria-label="Open project" className="grid h-8 w-8 shrink-0 place-items-center rounded-lg border-2 border-fg bg-pop-yellow text-[#16122b] transition group-hover:rotate-12 dark:border-border">
                           <ArrowUpRight size={16} />
                         </a>
                       )}
@@ -215,7 +220,7 @@ export default async function Home() {
           </div>
         </Section>
 
-        <Section id="skills" title="Skills" emoji="⚡">
+        <Section id="skills" title="Skills" icon={Zap}>
           <div className="grid gap-6 md:grid-cols-2">
             {skills.map((s, i) => (
               <Reveal key={s.id} delay={(i % 2) * 80}>
@@ -232,13 +237,13 @@ export default async function Home() {
           </div>
         </Section>
 
-        <Section id="awards" title="Awards & Publications" emoji="🏆">
+        <Section id="awards" title="Awards & Publications" icon={Trophy}>
           <div className="grid gap-4">
             {awards.map((a, i) => (
               <Reveal key={a.id} delay={i * 50}>
                 <div className="card card-hover flex flex-col gap-2 p-5 md:flex-row md:items-center md:justify-between">
                   <div className="flex items-start gap-4">
-                    <span className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl border-2 border-fg text-lg dark:border-border ${tints[i % tints.length]}`}>🏅</span>
+                    <span className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl border-2 border-fg text-[#16122b] dark:border-border ${tints[i % tints.length]}`}><Award size={20} aria-hidden /></span>
                     <div>
                       <p className="font-extrabold">{a.title}</p>
                       <p className="text-sm text-muted">{a.issuer}{a.note ? ` — ${a.note}` : ""}</p>
@@ -251,14 +256,14 @@ export default async function Home() {
           </div>
         </Section>
 
-        <Section id="contact" title="Contact" emoji="💌">
+        <Section id="contact" title="Contact" icon={Mail}>
           <Reveal>
             <div className="relative overflow-hidden rounded-3xl border-2 border-fg bg-accent p-8 text-white shadow-[8px_8px_0_0_var(--shadow)] dark:border-border dark:text-[#0f0c1f] md:p-12">
               <div className="float absolute -right-6 -top-6 h-28 w-28 rounded-full bg-pop-yellow/90" />
               <div className="float absolute -bottom-8 right-24 h-20 w-20 rotate-12 rounded-2xl bg-pop-pink/90" style={{ animationDelay: "1.5s" }} />
-              <h3 className="relative text-3xl font-extrabold md:text-4xl">Mari berkolaborasi! 🤝</h3>
+              <h3 className="relative flex items-center gap-3 text-3xl font-extrabold md:text-4xl">Let&apos;s work together <Handshake aria-hidden size={34} className="shrink-0" /></h3>
               <p className="relative mt-3 max-w-xl opacity-90">
-                Terbuka untuk peluang GIS / WebGIS Developer, Full-Stack, maupun Solution Architecture.
+                Open to GIS / WebGIS Developer, Full-Stack, and Solution Architecture opportunities.
               </p>
               <div className="relative mt-6 flex flex-wrap gap-3">
                 <a href={`mailto:${profile.email}`} className="inline-flex items-center gap-2 break-all rounded-xl border-2 border-[#16122b] bg-white px-4 py-2 text-sm font-bold text-[#16122b] shadow-[3px_3px_0_0_#16122b] transition hover:-translate-y-0.5">
@@ -276,7 +281,7 @@ export default async function Home() {
       </main>
 
       <footer className="mt-8 border-t-2 border-fg py-8 text-center text-sm font-medium text-muted dark:border-border">
-        © {new Date().getFullYear()} {profile.name} · dibuat dengan ☕ & Next.js
+        © {new Date().getFullYear()} {profile.name}
       </footer>
     </>
   );

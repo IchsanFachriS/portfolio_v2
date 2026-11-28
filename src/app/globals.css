@@ -6,7 +6,7 @@
   --bg: #fff8ec;
   --surface: #ffffff;
   --fg: #16122b;
-  --muted: #5d5878;
+  --muted: #4d4869;
   --border: #16122b;
   --navy: #16122b;
   --accent: #6c47ff;
@@ -16,6 +16,7 @@
   --pop-mint: #4fe3a8;
   --pop-sky: #5cc8ff;
   --shadow: #16122b;
+  color-scheme: light;
 }
 .dark {
   --bg: #0f0c1f;
@@ -31,6 +32,7 @@
   --pop-mint: #4fe3a8;
   --pop-sky: #5cc8ff;
   --shadow: #000000;
+  color-scheme: dark;
 }
 
 @theme inline {
@@ -63,24 +65,27 @@ body {
 ::selection { background: var(--pop-yellow); color: #16122b; }
 :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 
-/* ---------- Components ---------- */
-.input {
-  @apply w-full rounded-xl border-2 border-border bg-surface px-3 py-2 text-sm outline-none transition focus:border-accent focus:shadow-[3px_3px_0_0_var(--accent)];
-}
-.btn {
-  @apply inline-flex items-center justify-center gap-2 rounded-xl border-2 border-fg bg-accent px-4 py-2 text-sm font-semibold text-white shadow-[3px_3px_0_0_var(--shadow)] transition hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0_0_var(--shadow)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none disabled:opacity-50 dark:border-border dark:text-[#0f0c1f];
-}
-.btn-ghost {
-  @apply inline-flex items-center justify-center gap-2 rounded-xl border-2 border-fg bg-surface px-3 py-2 text-sm font-semibold shadow-[3px_3px_0_0_var(--shadow)] transition hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0_0_var(--shadow)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none dark:border-border;
-}
-.card {
-  @apply rounded-2xl border-2 border-fg bg-surface shadow-[5px_5px_0_0_var(--shadow)] transition dark:border-border;
-}
-.card-hover {
-  @apply hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[9px_9px_0_0_var(--shadow)];
-}
-.chip {
-  @apply inline-block rounded-full border-2 border-fg px-2.5 py-0.5 text-xs font-semibold dark:border-border;
+/* ---------- Components ----------
+   Dalam @layer components agar utilitas (mis. bg-pop-sky) tetap bisa menimpa. */
+@layer components {
+  .input {
+    @apply w-full rounded-xl border-2 border-border bg-surface px-3 py-2 text-sm text-fg outline-none placeholder:text-muted/70 transition focus:border-accent focus:shadow-[3px_3px_0_0_var(--accent)];
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border-2 border-fg bg-accent px-4 py-2 text-sm font-semibold text-white shadow-[3px_3px_0_0_var(--shadow)] transition hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0_0_var(--shadow)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none disabled:opacity-50 dark:border-border dark:text-[#0f0c1f];
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border-2 border-fg bg-surface px-3 py-2 text-sm font-semibold shadow-[3px_3px_0_0_var(--shadow)] transition hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0_0_var(--shadow)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none dark:border-border;
+  }
+  .card {
+    @apply rounded-2xl border-2 border-fg bg-surface shadow-[5px_5px_0_0_var(--shadow)] transition dark:border-border;
+  }
+  .card-hover {
+    @apply hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[9px_9px_0_0_var(--shadow)];
+  }
+  .chip {
+    @apply inline-block rounded-full border-2 border-fg px-2.5 py-0.5 text-xs font-semibold dark:border-border;
+  }
 }
 
 /* ---------- Animations ---------- */

@@ -10,7 +10,7 @@ export function EntityForm({
   fields,
   values,
   action,
-  submitLabel = "Simpan",
+  submitLabel = "Save",
   resetOnSuccess = false,
   children,
 }: {
@@ -53,10 +53,10 @@ export function EntityForm({
         );
       })}
       <div className="flex flex-wrap items-center gap-3 md:col-span-2">
-        <button className="btn" disabled={pending}>{pending ? "Menyimpan…" : submitLabel}</button>
+        <button className="btn" disabled={pending}>{pending ? "Saving…" : submitLabel}</button>
         {children}
         {state.error && <span className="text-sm text-red-500">{state.error}</span>}
-        {state.ok && !pending && <span className="text-sm text-green-600">Tersimpan ✓</span>}
+        {state.ok && !pending && <span className="text-sm text-green-600">Saved ✓</span>}
       </div>
     </form>
   );

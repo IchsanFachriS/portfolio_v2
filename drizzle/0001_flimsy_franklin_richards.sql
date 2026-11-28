@@ -1,0 +1,1 @@
+ALTER TABLE "portfolio"."profile" ALTER COLUMN "location" DROP NOT NULL;

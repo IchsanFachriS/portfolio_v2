@@ -14,14 +14,14 @@ async function main() {
     const passwordHash = await bcrypt.hash(password, 12);
     await db.insert(s.users).values({ email: email.toLowerCase(), name: "Admin", passwordHash })
       .onConflictDoUpdate({ target: s.users.email, set: { passwordHash } });
-    console.log(`Admin user siap: ${email}`);
+    console.log(`Admin user ready: ${email}`);
   } else {
-    console.warn("ADMIN_EMAIL / ADMIN_PASSWORD belum diisi — user admin dilewati.");
+    console.warn("ADMIN_EMAIL / ADMIN_PASSWORD not set — skipping admin user.");
   }
 
   const hasProfile = (await db.select().from(s.profile).where(eq(s.profile.id, "main")))[0];
   if (hasProfile) {
-    console.log("Konten sudah ada, seed konten dilewati.");
+    console.log("Content already exists, skipping content seed.");
     return;
   }
 
@@ -29,7 +29,6 @@ async function main() {
       id: "main",
       name: "Ichsan Fachri Siroj",
       headline: "Solution Architect | Full-Stack & WebGIS Developer",
-      location: "Bandung, Indonesia",
       email: "ichsanfachrisrj@gmail.com",
       linkedin: "https://linkedin.com/in/ichsanfsrj",
       github: "https://github.com/IchsanFachriS",
@@ -99,7 +98,7 @@ async function main() {
     skills.map(([name, items], i) => ({ name, items, order: i })),
   );
 
-  console.log("Konten awal dari CV berhasil di-seed.");
+  console.log("Initial CV content seeded.");
 }
 
 main().finally(() => client.end());

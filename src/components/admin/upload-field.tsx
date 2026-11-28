@@ -16,7 +16,7 @@ export function UploadField({ name, defaultValue, accept }: { name: string; defa
     const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
     const json = await res.json().catch(() => ({}));
     setBusy(false);
-    if (!res.ok) return setErr(json.error || "Upload gagal");
+    if (!res.ok) return setErr(json.error || "Upload failed");
     setValue(json.url);
   }
 
@@ -25,7 +25,7 @@ export function UploadField({ name, defaultValue, accept }: { name: string; defa
       <div className="flex flex-col gap-2 sm:flex-row">
         <input name={name} value={value} onChange={(e) => setValue(e.target.value)} className="input" placeholder="https://…" />
         <button type="button" onClick={() => ref.current?.click()} className="btn-ghost shrink-0" disabled={busy}>
-          <Upload size={14} /> {busy ? "Mengunggah…" : "Upload"}
+          <Upload size={14} /> {busy ? "Uploading…" : "Upload"}
         </button>
         <input ref={ref} type="file" accept={accept} hidden onChange={(e) => e.target.files?.[0] && onFile(e.target.files[0])} />
       </div>

@@ -12,9 +12,9 @@ export async function POST(req: Request) {
 
   const fd = await req.formData();
   const file = fd.get("file");
-  if (!(file instanceof File)) return NextResponse.json({ error: "File tidak ada" }, { status: 400 });
-  if (file.size > MAX) return NextResponse.json({ error: "Maksimal 20 MB" }, { status: 400 });
-  if (!ALLOWED.test(file.type)) return NextResponse.json({ error: "Hanya gambar atau PDF" }, { status: 400 });
+  if (!(file instanceof File)) return NextResponse.json({ error: "No file provided" }, { status: 400 });
+  if (file.size > MAX) return NextResponse.json({ error: "Maximum size is 20 MB" }, { status: 400 });
+  if (!ALLOWED.test(file.type)) return NextResponse.json({ error: "Only images or PDFs are allowed" }, { status: 400 });
 
   const ext = (file.name.split(".").pop() || "bin").toLowerCase().replace(/[^a-z0-9]/g, "");
   const folder = file.type.startsWith("image/") ? "images" : "files";
@@ -28,6 +28,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ url, id: media.id });
   } catch (e) {
     console.error(e);
-    return NextResponse.json({ error: "Upload gagal — cek konfigurasi object storage" }, { status: 500 });
+    return NextResponse.json({ error: "Upload failed — check the object storage configuration" }, { status: 500 });
   }
 }

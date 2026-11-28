@@ -3,13 +3,13 @@ import { logout } from "../actions";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 const links = [
-  ["/", "Profil"],
+  ["/", "Profile"],
   ["/experience", "Experience"],
   ["/projects", "Projects"],
   ["/skills", "Skills"],
   ["/awards", "Awards"],
   ["/media", "Media"],
-  ["/account", "Akun"],
+  ["/account", "Account"],
 ];
 
 export default async function DashLayout({ children }: { children: React.ReactNode }) {
@@ -28,8 +28,8 @@ export default async function DashLayout({ children }: { children: React.ReactNo
           ))}
         </nav>
         <div className="mt-3 flex items-center gap-3 border-t-2 border-border/30 pt-3 text-sm md:mt-6 md:block md:space-y-2 md:pt-4">
-          <a href={site} target="_blank" className="block px-3 font-semibold text-accent hover:underline">Lihat website ↗</a>
-          <form action={logout}><button className="px-3 font-semibold text-muted hover:text-fg">Keluar</button></form>
+          <a href={site} target="_blank" className="block px-3 font-semibold text-accent hover:underline">View website ↗</a>
+          <form action={logout}><button className="px-3 font-semibold text-muted hover:text-fg">Sign out</button></form>
         </div>
       </aside>
       <main className="mx-auto w-full max-w-4xl p-4 sm:p-6 md:p-10">{children}</main>

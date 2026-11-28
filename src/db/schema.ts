@@ -1,7 +1,7 @@
 import { boolean, integer, pgSchema, text, timestamp } from "drizzle-orm/pg-core";
 import { createId } from "./id";
 
-// Schema terpisah agar tidak bentrok dengan tabel aplikasi lain di database yang sama
+// Dedicated schema so we never collide with other apps sharing this database
 export const portfolio = pgSchema("portfolio");
 const pgTable = portfolio.table;
 
@@ -20,7 +20,7 @@ export const profile = pgTable("profile", {
   id: text("id").primaryKey().default("main"),
   name: text("name").notNull(),
   headline: text("headline").notNull(),
-  location: text("location").notNull(),
+  location: text("location"),
   email: text("email").notNull(),
   phone: text("phone"),
   linkedin: text("linkedin"),

@@ -8,13 +8,13 @@ export const resources: Record<ResourceKey, { title: string; path: string; title
     path: "/experience",
     titleField: "role",
     fields: [
-      { name: "role", label: "Posisi", type: "text", required: true },
-      { name: "company", label: "Perusahaan / Instansi", type: "text", required: true },
-      { name: "location", label: "Lokasi", type: "text" },
-      { name: "period", label: "Periode", type: "text", required: true, hint: "cth. Aug 2026 – Present" },
-      { name: "bullets", label: "Poin pekerjaan", type: "textarea", required: true, hint: "Satu poin per baris" },
-      { name: "order", label: "Urutan", type: "number" },
-      { name: "published", label: "Tampilkan", type: "checkbox" },
+      { name: "role", label: "Role", type: "text", required: true },
+      { name: "company", label: "Company / Organization", type: "text", required: true },
+      { name: "location", label: "Location", type: "text" },
+      { name: "period", label: "Period", type: "text", required: true, hint: "e.g. Aug 2026 – Present" },
+      { name: "bullets", label: "Highlights", type: "textarea", required: true, hint: "One point per line" },
+      { name: "order", label: "Order", type: "number" },
+      { name: "published", label: "Visible", type: "checkbox" },
     ],
   },
   project: {
@@ -22,14 +22,14 @@ export const resources: Record<ResourceKey, { title: string; path: string; title
     path: "/projects",
     titleField: "title",
     fields: [
-      { name: "title", label: "Judul", type: "text", required: true },
-      { name: "description", label: "Deskripsi", type: "textarea", required: true },
-      { name: "techStack", label: "Tech stack", type: "text", required: true, hint: "Pisahkan dengan koma" },
-      { name: "imageUrl", label: "Gambar", type: "image" },
-      { name: "link", label: "Link demo", type: "text" },
-      { name: "repo", label: "Link repo", type: "text" },
-      { name: "order", label: "Urutan", type: "number" },
-      { name: "published", label: "Tampilkan", type: "checkbox" },
+      { name: "title", label: "Title", type: "text", required: true },
+      { name: "description", label: "Description", type: "textarea", required: true },
+      { name: "techStack", label: "Tech stack", type: "text", required: true, hint: "Separate with commas" },
+      { name: "imageUrl", label: "Image", type: "image" },
+      { name: "link", label: "Demo link", type: "text" },
+      { name: "repo", label: "Repository link", type: "text" },
+      { name: "order", label: "Order", type: "number" },
+      { name: "published", label: "Visible", type: "checkbox" },
     ],
   },
   award: {
@@ -37,12 +37,12 @@ export const resources: Record<ResourceKey, { title: string; path: string; title
     path: "/awards",
     titleField: "title",
     fields: [
-      { name: "title", label: "Judul", type: "text", required: true },
-      { name: "issuer", label: "Penyelenggara", type: "text", required: true },
-      { name: "date", label: "Tanggal", type: "text", required: true },
-      { name: "note", label: "Keterangan", type: "text" },
-      { name: "order", label: "Urutan", type: "number" },
-      { name: "published", label: "Tampilkan", type: "checkbox" },
+      { name: "title", label: "Title", type: "text", required: true },
+      { name: "issuer", label: "Issuer", type: "text", required: true },
+      { name: "date", label: "Date", type: "text", required: true },
+      { name: "note", label: "Note", type: "text" },
+      { name: "order", label: "Order", type: "number" },
+      { name: "published", label: "Visible", type: "checkbox" },
     ],
   },
   skillGroup: {
@@ -50,25 +50,25 @@ export const resources: Record<ResourceKey, { title: string; path: string; title
     path: "/skills",
     titleField: "name",
     fields: [
-      { name: "name", label: "Kategori", type: "text", required: true },
-      { name: "items", label: "Skill", type: "textarea", required: true, hint: "Pisahkan dengan koma" },
-      { name: "order", label: "Urutan", type: "number" },
+      { name: "name", label: "Category", type: "text", required: true },
+      { name: "items", label: "Skill", type: "textarea", required: true, hint: "Separate with commas" },
+      { name: "order", label: "Order", type: "number" },
     ],
   },
 };
 
 export const profileFields: Field[] = [
-  { name: "name", label: "Nama", type: "text", required: true },
+  { name: "name", label: "Name", type: "text", required: true },
   { name: "headline", label: "Headline", type: "text", required: true },
-  { name: "location", label: "Lokasi", type: "text", required: true },
+  { name: "location", label: "Location", type: "text", hint: "Optional — leave empty to hide it from the homepage" },
   { name: "email", label: "Email", type: "text", required: true },
-  { name: "phone", label: "Telepon", type: "text" },
+  { name: "phone", label: "Phone", type: "text" },
   { name: "linkedin", label: "LinkedIn URL", type: "text" },
   { name: "github", label: "GitHub URL", type: "text" },
-  { name: "summary", label: "Ringkasan", type: "textarea", required: true },
-  { name: "education", label: "Pendidikan", type: "textarea", hint: "Baris pertama = nama kampus" },
-  { name: "avatarUrl", label: "Foto profil", type: "image" },
-  { name: "cvUrl", label: "File CV (PDF)", type: "file" },
+  { name: "summary", label: "Summary", type: "textarea", required: true },
+  { name: "education", label: "Education", type: "textarea", hint: "First line = institution name" },
+  { name: "avatarUrl", label: "Profile photo", type: "image" },
+  { name: "cvUrl", label: "CV file (PDF)", type: "file" },
 ];
 
 export function parseForm(fields: Field[], fd: FormData) {
@@ -79,7 +79,7 @@ export function parseForm(fields: Field[], fd: FormData) {
     else if (f.type === "number") data[f.name] = Number(raw) || 0;
     else {
       const v = (raw as string | null)?.trim() ?? "";
-      if (f.required && !v) throw new Error(`${f.label} wajib diisi`);
+      if (f.required && !v) throw new Error(`${f.label} is required`);
       data[f.name] = v || null;
     }
   }

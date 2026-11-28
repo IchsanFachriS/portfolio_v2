@@ -9,19 +9,19 @@ import { createSession, destroySession, requireSession } from "@/lib/auth";
 import { deleteObject } from "@/lib/storage";
 import { parseForm, profileFields, resources, type ResourceKey } from "@/lib/resources";
 
-// --- simple in-memory rate limit untuk login ---
+// --- simple in-memory rate limit for login ---
 const attempts = new Map<string, { n: number; t: number }>();
 
 export async function login(_: unknown, fd: FormData) {
   const email = String(fd.get("email") || "").toLowerCase().trim();
   const password = String(fd.get("password") || "");
   const a = attempts.get(email);
-  if (a && a.n >= 5 && Date.now() - a.t < 15 * 60_000) return { error: "Terlalu banyak percobaan. Coba lagi 15 menit." };
+  if (a && a.n >= 5 && Date.now() - a.t < 15 * 60_000) return { error: "Too many attempts. Try again in 15 minutes." };
 
   const user = await db.query.users.findFirst({ where: eq(schema.users.email, email) });
   if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
     attempts.set(email, { n: (a?.n ?? 0) + 1, t: Date.now() });
-    return { error: "Email atau password salah." };
+    return { error: "Incorrect email or password." };
   }
   attempts.delete(email);
   await createSession(user.id);
@@ -83,9 +83,9 @@ export async function changePassword(_: unknown, fd: FormData) {
   const uid = await requireSession();
   const current = String(fd.get("current") || "");
   const next = String(fd.get("next") || "");
-  if (next.length < 10) return { error: "Password baru minimal 10 karakter.", ok: false };
+  if (next.length < 10) return { error: "New password must be at least 10 characters.", ok: false };
   const user = await db.query.users.findFirst({ where: eq(schema.users.id, uid) });
-  if (!user || !(await bcrypt.compare(current, user.passwordHash))) return { error: "Password lama salah.", ok: false };
+  if (!user || !(await bcrypt.compare(current, user.passwordHash))) return { error: "Current password is incorrect.", ok: false };
   await db.update(schema.users).set({ passwordHash: await bcrypt.hash(next, 12) }).where(eq(schema.users.id, uid));
   return { error: null, ok: true };
 }

@@ -10,7 +10,7 @@ export function ThemeToggle() {
   const dark = mounted && resolvedTheme === "dark";
   return (
     <button
-      aria-label="Ganti tema"
+      aria-label="Toggle theme"
       onClick={() => setTheme(dark ? "light" : "dark")}
       className="btn-ghost !p-2"
     >

@@ -1,7 +1,7 @@
 import "server-only";
 import { S3Client, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 
-// Kompatibel dengan S3 apa pun: AWS S3, Cloudflare R2, MinIO, IDCloudHost, Biznet Neo, dll.
+// Compatible with any S3 provider: AWS S3, Cloudflare R2, MinIO, IDCloudHost, Biznet Neo, etc.
 const client = new S3Client({
   region: process.env.S3_REGION || "auto",
   endpoint: process.env.S3_ENDPOINT || undefined,

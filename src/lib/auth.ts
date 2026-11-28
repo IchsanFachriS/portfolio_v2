@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 const COOKIE = "admin_session";
 const secret = () => {
   const s = process.env.AUTH_SECRET;
-  if (!s || s.length < 32) throw new Error("AUTH_SECRET wajib diisi (min. 32 karakter)");
+  if (!s || s.length < 32) throw new Error("AUTH_SECRET is required (min. 32 characters)");
   return new TextEncoder().encode(s);
 };
 
