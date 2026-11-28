@@ -51,7 +51,8 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_PORT || 22 }}
           # Sidik jari host key VPS (publik) agar koneksi tidak bisa dibajak (MITM).
-          fingerprint: SHA256:LlxdnGI4pRQze1hPRhWrboFfdT3snZBSva6jBWvKmws
+          # (ECDSA; klien Go menegosiasikan tipe ini lebih dulu daripada ED25519)
+          fingerprint: SHA256:O9/vsiyYW69uJihBJm4/OfVdnF4yh7Cvmbwbnc7s2B8
           script_stop: true
           script: |
             set -e
