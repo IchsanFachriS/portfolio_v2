@@ -1,25 +1,70 @@
-name: Deploy to VPS
+name: CI & Deploy
 
 on:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
 
+# Satu deploy pada satu waktu; deploy yang sedang berjalan tidak dibatalkan di tengah jalan.
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
-  deploy:
+  check:
+    name: Typecheck & Lint
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx tsc --noEmit
+      - run: npm run lint
+
+  deploy:
+    name: Deploy to VPS
+    needs: check
+    # Hanya push ke main / jalan manual; pull request cukup lewat job "check".
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    env:
+      HAS_DEPLOY_KEY: ${{ secrets.VPS_SSH_KEY != '' && secrets.VPS_HOST != '' }}
+    steps:
+      - name: Secrets belum diisi
+        if: env.HAS_DEPLOY_KEY != 'true'
+        run: echo "::warning::Secrets VPS_HOST / VPS_USER / VPS_SSH_KEY belum diisi, deploy dilewati."
+
       - name: Deploy via SSH
+        if: env.HAS_DEPLOY_KEY == 'true'
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_PORT || 22 }}
+          # Sidik jari host key VPS (publik) agar koneksi tidak bisa dibajak (MITM).
+          fingerprint: SHA256:LlxdnGI4pRQze1hPRhWrboFfdT3snZBSva6jBWvKmws
+          script_stop: true
           script: |
             set -e
             cd ${{ secrets.VPS_APP_DIR || '~/portfolio' }}
-            git pull --ff-only
-            docker compose up -d --build
+            git fetch origin main
+            git reset --hard origin/main
+            # Hanya service milik proyek ini; stack lain di VPS tidak disentuh.
+            docker compose up -d --build portfolio
             docker compose exec -T portfolio node scripts/migrate.js
-            docker image prune -f
+            docker compose ps portfolio
+
+      - name: Health check
+        if: env.HAS_DEPLOY_KEY == 'true'
+        run: |
+          curl -fsS --retry 8 --retry-delay 5 --retry-all-errors -m 30 \
+            -o /dev/null -w "ichsanfachri.my.id -> %{http_code} (%{time_total}s)\n" \
+            https://ichsanfachri.my.id/
+          curl -fsS --retry 8 --retry-delay 5 --retry-all-errors -m 30 \
+            -o /dev/null -w "admin.ichsanfachri.my.id/login -> %{http_code} (%{time_total}s)\n" \
+            https://admin.ichsanfachri.my.id/login

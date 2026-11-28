@@ -72,9 +72,31 @@ docker exec app-caddy-1 caddy reload --config /etc/caddy/Caddyfile
 3. Isi variabel `S3_*` di `.env`. `S3_PUBLIC_URL` adalah URL dasar yang dipakai untuk menampilkan file.
 4. Upload lewat server (tanpa presigned URL), jadi bucket **tidak perlu** pengaturan CORS.
 
-### 6. Auto-deploy dari GitHub (opsional)
-Isi secrets ini di repo (Settings → Secrets → Actions): `VPS_HOST`, `VPS_USER`, `VPS_SSH_KEY`, opsional `VPS_PORT` dan `VPS_APP_DIR`.
-Setelah itu, setiap push ke `main` akan menjalankan pull, rebuild, dan migrasi di VPS.
+### 6. Auto-deploy dari GitHub (CI/CD)
+Setiap push ke `main` menjalankan `.github/workflows/deploy.yml`:
+1. **check:** typecheck + lint (juga jalan di pull request).
+2. **deploy:** SSH ke VPS, `git reset --hard origin/main`, `docker compose up -d --build portfolio`, migrasi database.
+3. **health check:** memastikan `ichsanfachri.my.id` dan `admin.ichsanfachri.my.id/login` merespons.
+
+Deploy hanya menyentuh service `portfolio`; stack lain di VPS tidak diubah. Jika secrets belum diisi, deploy dilewati dengan peringatan.
+
+**Setup sekali (di laptop):**
+```bash
+ssh-keygen -t ed25519 -f ~/.ssh/portfolio_deploy -N "" -C "github-actions-portfolio"
+ssh-copy-id -i ~/.ssh/portfolio_deploy.pub ubuntu@43.133.142.23
+cat ~/.ssh/portfolio_deploy      # isi untuk secret VPS_SSH_KEY (key privat, jangan dibagikan)
+```
+Lalu di GitHub: **Settings → Secrets and variables → Actions → New repository secret**:
+
+| Secret | Isi |
+|---|---|
+| `VPS_HOST` | `43.133.142.23` |
+| `VPS_USER` | `ubuntu` |
+| `VPS_SSH_KEY` | isi file `~/.ssh/portfolio_deploy` (seluruhnya, termasuk baris `BEGIN`/`END`) |
+| `VPS_PORT` | opsional, default 22 |
+| `VPS_APP_DIR` | opsional, default `~/portfolio` |
+
+Sidik jari host key VPS tertanam di workflow; jika VPS di-install ulang, perbarui nilainya.
 
 ## Cara update konten
 Buka `admin.ichsanfachri.my.id`, login, lalu edit. Perubahan langsung tampil di website. Foto/PDF diunggah lewat tombol **Upload** di form, atau lewat menu **Media**.
