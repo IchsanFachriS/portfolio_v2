@@ -1,6 +1,6 @@
 "use client";
 import { useRef, useState } from "react";
-import { Upload } from "lucide-react";
+import { Trash2, Upload } from "lucide-react";
 
 export function UploadField({ name, defaultValue, accept }: { name: string; defaultValue?: string | null; accept: string }) {
   const [value, setValue] = useState(defaultValue ?? "");
@@ -27,6 +27,20 @@ export function UploadField({ name, defaultValue, accept }: { name: string; defa
         <button type="button" onClick={() => ref.current?.click()} className="btn-ghost shrink-0" disabled={busy}>
           <Upload size={14} /> {busy ? "Uploading…" : "Upload"}
         </button>
+        {value && (
+          <button
+            type="button"
+            onClick={() => {
+              setValue("");
+              setErr(null);
+              if (ref.current) ref.current.value = "";
+            }}
+            className="btn-ghost shrink-0 !text-red-500"
+            disabled={busy}
+          >
+            <Trash2 size={14} /> Remove
+          </button>
+        )}
         <input ref={ref} type="file" accept={accept} hidden onChange={(e) => e.target.files?.[0] && onFile(e.target.files[0])} />
       </div>
       {err && <p className="text-xs text-red-500">{err}</p>}

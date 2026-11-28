@@ -61,8 +61,20 @@ export async function saveProfile(_: unknown, fd: FormData) {
   await requireSession();
   try {
     const data = parseForm(profileFields, fd) as Record<string, string>;
+    const old = await db.query.profile.findFirst({ where: eq(schema.profile.id, "main") });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await db.insert(schema.profile).values({ id: "main", ...(data as any) }).onConflictDoUpdate({ target: schema.profile.id, set: data });
+    // A removed or replaced CV / photo is also deleted from object storage.
+    for (const f of ["cvUrl", "avatarUrl"] as const) {
+      const prev = old?.[f];
+      if (prev && prev !== (data[f] ?? null)) {
+        const m = await db.query.media.findFirst({ where: eq(schema.media.url, prev) });
+        if (m) {
+          await deleteObject(m.key).catch(() => {});
+          await db.delete(schema.media).where(eq(schema.media.id, m.id));
+        }
+      }
+    }
   } catch (e) {
     return { error: (e as Error).message, ok: false };
   }
